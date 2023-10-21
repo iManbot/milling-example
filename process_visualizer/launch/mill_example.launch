@@ -1,0 +1,77 @@
+<launch>
+  <param name="/use_sim_time" value="true" />
+  <arg name="robot_name"/>
+  <arg name="init_pose"/>
+  <arg name= "limited" default= "false"/>
+  <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
+  <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+  <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur_description)/urdf/ur5_robot.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
+  <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur_description)/urdf/ur5_joint_limited_robot.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
+  <param name="object_urdf_path" type="str" value="$(find process_visualizer)/urdf/object.urdf"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="worlds/empty.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+<!-- Spawn a bench for robot 1 into Gazebo -->
+  <node name="spawn_urdf_robot_benchA" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_bench.urdf -urdf -x 0.23 -y 0.73 -z 0.5 -model robot_bench_1" />
+
+  <node name="spawn_urdf_robot_benchB" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_bench.urdf -urdf -x 0.11 -y 0.12 -z 0.1 -model robot_bench_1" />
+
+
+<!-- Spawn a bench for robot 1 into Gazebo -->
+  <node name="spawn_urdf_robot_benchC" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_bench.urdf -urdf -x 0.12 -y 0.1 -z -0.1 -model robot_bench_2" />
+
+<!-- Spawn a bench for robot 1 into Gazebo -->
+  <node name="spawn_urdf_robot_benchD" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_bench.urdf -urdf -x 0.11 -y 0.22 -z -0.1 -model robot_bench_3" />
+
+<!--Spawn a bench for object near robot 1 to pick up-->
+  <node name="spawn_urdf_object_benchA" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/object_bench.urdf -urdf -x 1.28 -y 0.53 -z 0.1 -model object_bench_1" />
+
+<!--Spawn a bench for object near robot 1 to pick up-->
+  <node name="spawn_urdf_object_benchB" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/object_bench.urdf -urdf -x 0.8 -y -0.12 -z 0.1 -model object_bench_2" />
+
+<!--Spawn a bench for object near robot 1 to pick up-->
+  <node name="spawn_urdf_object_benchC" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/object_bench.urdf -urdf -x 2.5 -y -2.1 -z 0.1 -model object_bench_3" />
+
+<!--Spawn a bench for object near robot 1 to pick up-->
+  <node name="spawn_urdf_object_benchD" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/object_bench.urdf -urdf -x 0.1 -y -2.7 -z 0.1 -model object_bench_4" />
+
+<!--Spawn a bin 1 for object near robot 1 to pick up-->
+  <node name="spawn_urdf_binA" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/bin.urdf -urdf -x 2 -y -05 -z 0.5 -model bin_1" />
+
+<!--Spawn a bin 1 for object near robot 1 to pick up-->
+  <node name="spawn_urdf_binB" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/bin.urdf -urdf -x 3 -y -0.1 -z 0.3 -model bin_2" />
+
+<!--Spawn a bin 1 for object near robot 1 to pick up-->
+  <node name="spawn_urdf_milling_bench" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/milling_bench.urdf -urdf -x 0.1 -y 0.1 -z 0.06 -model milling_bench" />
+
+
+  <group ns="ur5_robotA">
+    <param name="tf_prefix" value="ur5_robot1_tf" />
+      <include file="$(find ur_gazebo)/launch/ur5.launch">
+        <arg name="init_pose" value="-x 2 -y 0.1 -z 0.5"/>
+        <arg name="robot_name" value="ur5_robot1"/>
+      </include>
+    </group>
+
+  <group ns="ur5_robotB">
+    <param name="tf_prefix" value="ur5_robot2_tf" />
+      <include file="$(find ur_gazebo)/launch/ur5.launch">
+        <arg name="init_pose" value="-x 2 -y 0.1 -z 0.5"/>
+        <arg name="robot_name" value="ur5_robot2"/>
+      </include>
+    </group>
+
+  <group ns="ur10_robot">
+    <param name="tf_prefix" value="ur10_robot_tf" />
+      <include file="$(find ur_gazebo)/launch/ur10.launch">
+        <arg name="init_pose" value="-x 0.1 -y 0.1 -z -0.1"/>
+        <arg name="robot_name" value="ur10_robot"/>
+      </include>
+    </group>
+
+</launch>
